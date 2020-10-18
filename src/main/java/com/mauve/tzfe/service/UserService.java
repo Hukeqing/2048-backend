@@ -27,7 +27,9 @@ public class UserService {
         userMapper.updateSession(session, id);
     }
 
-
+    public void changeUserPassword(String password, Integer id) {
+        userMapper.updatePassword(id, password);
+    }
 
     public Boolean registerNewAccount(String account, String password, String nick) {
         if (getUserByAccount(account) != null) return false;

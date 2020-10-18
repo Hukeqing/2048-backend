@@ -2,11 +2,11 @@ package com.mauve.tzfe.controller;
 
 import com.mauve.tzfe.model.Response;
 import com.mauve.tzfe.model.entity.User;
-import com.mauve.tzfe.model.request.GameRequest;
-import com.mauve.tzfe.model.request.LoginRequest;
-import com.mauve.tzfe.model.request.NewScoreRequest;
-import com.mauve.tzfe.model.request.RegisterRequest;
+import com.mauve.tzfe.model.request.*;
 import com.mauve.tzfe.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@Api(value = "用户", tags = {"用户接口"})
 public class UserController {
 
     @Resource
@@ -51,13 +52,22 @@ public class UserController {
         return Response.fail("邮箱被占用");
     }
 
-    @PostMapping("/newScore")
-    public Response<Boolean> newScore(@RequestBody NewScoreRequest request, HttpServletRequest header) {
+    @PostMapping("/changePassword")
+    public Response<Boolean> changePassword(@ApiParam(value = "新的密码") @RequestBody ChangePasswordRequest request, HttpServletRequest header) {
         User curUser = userService.checkUser(header.getSession().toString());
         if (curUser == null) return Response.fail("未登录");
-        if (curUser.getHighest() > request.getScore()) return Response.success(false);
-        userService.setNewScore(curUser.getId(), request.getScore());
+        userService.changeUserPassword(request.getPassword(), curUser.getId());
         return Response.success(true);
+    }
+
+    @PostMapping("/newScore")
+    @ApiOperation(value = "修改记录分数", notes = "返回时，返回现在的最高分，即如果发送的分数比原来的低，则会返回原来的分数，反之返回新的分数")
+    public Response<Integer> newScore(@RequestBody NewScoreRequest request, HttpServletRequest header) {
+        User curUser = userService.checkUser(header.getSession().toString());
+        if (curUser == null) return Response.fail("未登录");
+        if (curUser.getHighest() > request.getScore()) return Response.success(curUser.getHighest());
+        userService.setNewScore(curUser.getId(), request.getScore());
+        return Response.success(request.getScore());
     }
 
     @PostMapping("/game")

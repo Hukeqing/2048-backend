@@ -6,14 +6,16 @@ import com.mauve.tzfe.model.request.AddFriendRequest;
 import com.mauve.tzfe.model.request.DealRequest;
 import com.mauve.tzfe.service.FriendService;
 import com.mauve.tzfe.service.UserService;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@RequestMapping("/friend")
 @RestController
+@RequestMapping("/friend")
+@Api(value = "好友", tags = {"好友接口"})
 public class FriendController {
     @Resource
     private FriendService friendService;
