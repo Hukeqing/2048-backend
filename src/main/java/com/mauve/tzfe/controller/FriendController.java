@@ -24,22 +24,22 @@ public class FriendController {
     private UserService userService;
 
     @GetMapping("/getList")
-    public Response<List<User>> getFriendList(HttpServletRequest header) {
-        User curUser = userService.checkUser(header.getSession().toString());
+    public Response<List<User>> getFriendList(HttpServletRequest httpServletRequest) {
+        User curUser = userService.checkUser(httpServletRequest.getRequestedSessionId());
         if (curUser == null) return Response.fail("未登录");
         return Response.success(friendService.getFriendsList(curUser.getId()));
     }
 
     @GetMapping("/getRequest")
-    public Response<List<User>> getFriendRequest(HttpServletRequest header) {
-        User curUser = userService.checkUser(header.getSession().toString());
+    public Response<List<User>> getFriendRequest(HttpServletRequest httpServletRequest) {
+        User curUser = userService.checkUser(httpServletRequest.getRequestedSessionId());
         if (curUser == null) return Response.fail("未登录");
         return Response.success(friendService.getFriendRequest(curUser.getId()));
     }
 
     @PostMapping("/addFriend")
-    public Response<Boolean> addFriend(@RequestBody AddFriendRequest request, HttpServletRequest header) {
-        User curUser = userService.checkUser(header.getSession().toString());
+    public Response<Boolean> addFriend(@RequestBody AddFriendRequest request, HttpServletRequest httpServletRequest) {
+        User curUser = userService.checkUser(httpServletRequest.getRequestedSessionId());
         if (curUser == null) return Response.fail("未登录");
         User toUser = userService.getUserByAccount(request.getAccount());
         if (toUser == null) return Response.fail("用户不存在");
@@ -49,24 +49,24 @@ public class FriendController {
     }
 
     @PostMapping("/acceptFriend")
-    public Response<Boolean> acceptFriend(@RequestBody DealRequest request, HttpServletRequest header) {
-        User curUser = userService.checkUser(header.getSession().toString());
+    public Response<Boolean> acceptFriend(@RequestBody DealRequest request, HttpServletRequest httpServletRequest) {
+        User curUser = userService.checkUser(httpServletRequest.getRequestedSessionId());
         String res = friendService.dealFriend(curUser.getId(), request.getId(), true);
         if (res.isEmpty()) return Response.success(true);
         return Response.fail(res);
     }
 
     @PostMapping("/rejectFriend")
-    public Response<Boolean> rejectFriend(@RequestBody DealRequest request, HttpServletRequest header) {
-        User curUser = userService.checkUser(header.getSession().toString());
+    public Response<Boolean> rejectFriend(@RequestBody DealRequest request, HttpServletRequest httpServletRequest) {
+        User curUser = userService.checkUser(httpServletRequest.getRequestedSessionId());
         String res = friendService.dealFriend(curUser.getId(), request.getId(), false);
         if (res.isEmpty()) return Response.success(true);
         return Response.fail(res);
     }
 
     @PostMapping("/deleteFriend")
-    public Response<Boolean> deleteFriend(@RequestBody DealRequest request, HttpServletRequest header) {
-        User curUser = userService.checkUser(header.getSession().toString());
+    public Response<Boolean> deleteFriend(@RequestBody DealRequest request, HttpServletRequest httpServletRequest) {
+        User curUser = userService.checkUser(httpServletRequest.getRequestedSessionId());
         String res = friendService.deleteFriend(curUser.getId(), request.getId());
         if (res.isEmpty()) return Response.success(true);
         return Response.fail(res);

@@ -20,6 +20,9 @@ public interface UserMapper {
     @Update("UPDATE user SET password=#{password} WHERE id=#{id}")
     void updatePassword(@Param("id") Integer id, @Param("password") String password);
 
+    @Update("UPDATE user SET nick=#{nick} WHERE id=#{id}")
+    void updateUserNick(@Param("id") Integer id, @Param("nick") String nick);
+
     @Update("UPDATE user SET highest=#{score} WHERE id=#{id}")
     void updateScore(@Param("id") Integer id, @Param("score") Integer score);
 
