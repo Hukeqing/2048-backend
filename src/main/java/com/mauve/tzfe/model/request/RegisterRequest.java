@@ -1,6 +1,6 @@
 package com.mauve.tzfe.model.request;
 
-import com.sun.istack.internal.NotNull;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data

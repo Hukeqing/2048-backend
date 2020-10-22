@@ -11,8 +11,8 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE id=#{id}")
     User selectUserById(@Param("id") Integer id);
 
-    @Select("SELECT * FROM user WHERE session=#{session}")
-    User selectUserBySession(@Param("session") String session);
+    @Select("SELECT * FROM user WHERE token=#{token}")
+    User selectUserByToken(@Param("token") String token);
 
     @Insert("INSERT INTO user (account, password, nick) VALUE (#{account}, #{password}, #{nick})")
     void insertUser(@Param("account") String account, @Param("password") String password, @Param("nick") String nick);
@@ -29,6 +29,6 @@ public interface UserMapper {
     @Update("UPDATE user SET lastGame=#{game} WHERE id=#{id}")
     void updateGame(@Param("id") Integer id, @Param("game") String game);
 
-    @Update("UPDATE user SET session=#{session} WHERE id=#{id}")
-    void updateSession(@Param("session") String session, @Param("id") Integer id);
+    @Update("UPDATE user SET token=#{token} WHERE id=#{id}")
+    void updateToken(@Param("token") String token, @Param("id") Integer id);
 }

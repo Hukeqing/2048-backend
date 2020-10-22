@@ -1,7 +1,7 @@
 package com.mauve.tzfe.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.internal.NotNull;
+import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -20,4 +20,6 @@ public class User {
     Integer highest;
     @ApiModelProperty("用户上一次比赛的成绩")
     String lastGame;
+    @JsonIgnore
+    String token;
 }

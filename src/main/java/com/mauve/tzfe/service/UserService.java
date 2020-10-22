@@ -5,6 +5,9 @@ import com.mauve.tzfe.model.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -23,12 +26,26 @@ public class UserService {
         return userMapper.selectUserByAccount(account);
     }
 
-    public User checkUser(String session) {
-        return userMapper.selectUserBySession(session);
+    public User checkUser(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length <= 0) return null;
+        for (Cookie cookie : cookies) {
+            if (!cookie.getName().equals("token")) continue;
+            return userMapper.selectUserByToken(cookie.getValue());
+        }
+        return null;
     }
 
-    public void updateUserSession(String session, Integer id) {
-        userMapper.updateSession(session, id);
+    public void addUserToken(HttpServletResponse response, Integer id) {
+        String token = encryption(id.toString() + System.currentTimeMillis());
+        Cookie cookie = new Cookie("token", token);
+//        cookie.setMaxAge(24 * 3600);
+        response.addCookie(cookie);
+        userMapper.updateToken(token, id);
+    }
+
+    public void deleteUserToken(Integer id) {
+        userMapper.updateToken("", id);
     }
 
     public void changeUserPassword(String password, Integer id) {
@@ -54,9 +71,8 @@ public class UserService {
     }
 
     private static String encryption(@NotNull String str) {
-        MessageDigest messageDigest = null;
         try {
-            messageDigest = MessageDigest.getInstance("SHA");
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA");
             messageDigest.update(str.getBytes());
             return new BigInteger(messageDigest.digest()).toString(32);
         } catch (NoSuchAlgorithmException e) {
